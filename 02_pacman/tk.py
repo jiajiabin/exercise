@@ -86,9 +86,9 @@ thread.start()
 thread2 = threading.Thread(target=while1)
 thread2.name = "子线程2"
 thread2.start()
-thread3 = threading.Thread(target=player_move)
-thread3.name = "子线程3"
-thread3.start()
+# thread3 = threading.Thread(target=player_move)
+# thread3.name = "子线程3"
+# thread3.start()
 
 # 创建标签
 l1 = tkinter.Label(window, bg='green', fg='white', width=25, height=1, text='您将与电脑一起比赛吃豆子')

@@ -23,10 +23,9 @@ class Init_Delegate:
     def close_list(self):
         return self.__close_list
 
-
+# 全局变量，用来给节点调用
 map_border = []
 end = None
-
 
 # 节点类（管理父节点，节点坐标，节点FGH三值)
 class Node:
@@ -103,32 +102,32 @@ class Find_Way:
 
     # 寻路函数，外侧调用
     def find_way(self, delegate: Init_Delegate):
+        # 清空所有列表，为本次寻路作准备
         self.__open_dict.clear()
         self.__close_dict.clear()
+        # 导入全局变量
         global map_border, end
+        # 导入代理对象
         self.__delegate = delegate
         map_border = self.__delegate.map_border
         end = self.__delegate.end
         # 定义开始、结束节点
         self.__start_node = Node(None, self.__delegate.start[0][0], self.__delegate.start[0][1])
         self.__end_node = Node(None, self.__delegate.end[0][0], self.__delegate.end[0][1])
+        # 根据障碍物创建初始关闭节点
         self.__set_close_dict()
         # 从起点开始寻路
         self.__open_dict[self.__delegate.start[0]] = self.__start_node
         the_now_node = self.__start_node
-        # try:
         # 循环以当前节点与终点比较，找到最短路径
         while self.__addAdjacentIntoOpen(the_now_node):
             the_now_node = self.__min_F_node()
         self.__recursive_way(self.__end_node)
         return self.short_way
-        # except Exception as err:
-        #     # 若无路，则调用外侧函数，默认pass
-        #     return []
 
     # 寻找F值最小的节点
     def __min_F_node(self):
-        # 自定义无路错误
+        # 如果无路可到达，最短路径为空列表，返回值给寻路函数调用
         if len(self.__open_dict) == 0:
             self.__short_way = []
             return 1
@@ -143,6 +142,7 @@ class Find_Way:
 
     # 将当前节点的周围点（上下左右4个，默认不可走斜线）加入开放坐标字典表
     def __addAdjacentIntoOpen(self, the_now_node):
+        # 无路可达返回False，终止寻路函数循环
         if the_now_node == 1:
             return False
         # 将当前节点从开放（坐标字典表）中移除，加入关闭（坐标字典表）
@@ -150,6 +150,7 @@ class Find_Way:
         self.__close_dict[(the_now_node.x, the_now_node.y)] = the_now_node
         # 添加周围节点列表
         round_list = []
+        # 防止边缘坐标创建节点报错，捕获错误，跳过
         try:
             round_list.append(Node(the_now_node, the_now_node.x - 1, the_now_node.y))
         except Exception as e:
